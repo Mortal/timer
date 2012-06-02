@@ -7,15 +7,16 @@
 function Timer() {
 	this._int = null;
 	this._elapsed = 0;
+	this._started = null;
 	this.start();
 	this.onupdate = function (sec) {};
 }
 Timer.prototype.start = function () {
 	var self = this;
 	if (self._int) self.stop();
+	self._started = new Date;
 	var dur = 100;
 	self._int = setInterval(function() {
-		self._elapsed += dur/1000;
 		self.onupdate(self.elapsed());
 	}, dur);
 };
@@ -23,6 +24,8 @@ Timer.prototype.stop = function () {
 	var self = this;
 	if (self._int) clearInterval(self._int);
 	self._int = null;
+	if (self._started) self._elapsed += ((new Date).getTime()-self._started.getTime())/1000;
+	self._started = null;
 };
 Timer.prototype.reset = function () {
 	var self = this;
@@ -34,7 +37,11 @@ function round(x, decimals) {
 	return (s.substring(0, s.length-decimals) || '0')+'.'+s.substring(s.length-decimals, s.length);
 }
 Timer.prototype.elapsed = function () {
-	return round(this._elapsed, 1);
+	var t = this._elapsed || 0;
+	if (this._started) {
+		t += ((new Date).getTime()-(this._started.getTime()))/1000;
+	}
+	return round(t, 1);
 };
 window.onload = function () {
 	var elapsed = document.body.appendChild(document.createElement('div'));
