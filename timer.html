@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Timer</title>
+<script>
+function Timer() {
+	this._int = null;
+	this._elapsed = 0;
+	this.start();
+	this.onupdate = function (sec) {};
+}
+Timer.prototype.start = function () {
+	var self = this;
+	if (self._int) self.stop();
+	var dur = 100;
+	self._int = setInterval(function() {
+		self._elapsed += dur/1000;
+		self.onupdate(self.elapsed());
+	}, dur);
+};
+Timer.prototype.stop = function () {
+	var self = this;
+	if (self._int) clearInterval(self._int);
+	self._int = null;
+};
+Timer.prototype.reset = function () {
+	var self = this;
+	self.stop();
+	self._elapsed = 0;
+};
+function round(x, decimals) {
+	var s = Math.round(x*Math.pow(10, decimals))+'';
+	return (s.substring(0, s.length-decimals) || '0')+'.'+s.substring(s.length-decimals, s.length);
+}
+Timer.prototype.elapsed = function () {
+	return round(this._elapsed, 1);
+};
+window.onload = function () {
+	var elapsed = document.body.appendChild(document.createElement('div'));
+	window.timer = new Timer();
+	window.timer.stop();
+	window.timer.onupdate = function (s) {
+		elapsed.innerHTML = s;
+	};
+	var started = false;
+	window.onkeydown = function (ev) {
+		switch (ev.keyCode) {
+			case 32: // space
+				if (started) window.timer.stop();
+				else window.timer.start();
+				started = !started;
+				break;
+			case 76: // l
+				var line = document.createElement('div');
+				line.appendChild(document.createTextNode('Lap: '+timer.elapsed()));
+				document.body.appendChild(line);
+				break;
+			case 82: // r
+				window.timer.reset();
+				if (started) window.timer.start();
+				break;
+			case 83: // s
+				window.timer.stop();
+				started = false;
+				break;
+			default:
+				return true;
+		}
+		return false;
+	};
+};
+// space = 32
+// l = 76
+// s = 83
+// r = 82
+</script>
+</head>
+<body>
+</body>
+</html>
