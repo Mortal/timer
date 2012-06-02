@@ -36,12 +36,21 @@ function round(x, decimals) {
 	var s = Math.round(x*Math.pow(10, decimals))+'';
 	return (s.substring(0, s.length-decimals) || '0')+'.'+s.substring(s.length-decimals, s.length);
 }
+function pad(s) {
+	if (s < 10) return '0'+s;
+	return s;
+}
+function hms(t) {
+	if (t >= 3600) return pad(Math.floor(t/3600))+":"+hms(t%3600);
+	if (t >= 60) return pad(Math.floor(t/60))+":"+hms(t%60);
+	return pad(round(t, 1));
+}
 Timer.prototype.elapsed = function () {
 	var t = this._elapsed || 0;
 	if (this._started) {
 		t += ((new Date).getTime()-(this._started.getTime()))/1000;
 	}
-	return round(t, 1);
+	return hms(t);
 };
 window.onload = function () {
 	var elapsed = document.body.appendChild(document.createElement('div'));
