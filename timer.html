@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Timer</title>
 <script>
-var now = window.performance.now;
+function now() { return window.performance.now(); }
 function Timer() {
 	this._int = null;
 	this._elapsed = 0;
