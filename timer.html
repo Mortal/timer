@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>Timer</title>
 <script>
+var now = window.performance.now;
 function Timer() {
 	this._int = null;
 	this._elapsed = 0;
@@ -14,7 +15,7 @@ function Timer() {
 Timer.prototype.start = function () {
 	var self = this;
 	if (self._int) self.stop();
-	self._started = new Date;
+	self._started = now();
 	var dur = 100;
 	self._int = setInterval(function() {
 		self.onupdate(self.elapsed());
@@ -24,7 +25,7 @@ Timer.prototype.stop = function () {
 	var self = this;
 	if (self._int) clearInterval(self._int);
 	self._int = null;
-	if (self._started) self._elapsed += ((new Date).getTime()-self._started.getTime())/1000;
+	if (self._started != null) self._elapsed += (now()-self._started)/1000;
 	self._started = null;
 };
 Timer.prototype.reset = function () {
@@ -47,8 +48,8 @@ function hms(t) {
 }
 Timer.prototype.elapsed = function () {
 	var t = this._elapsed || 0;
-	if (this._started) {
-		t += ((new Date).getTime()-(this._started.getTime()))/1000;
+	if (this._started != null) {
+		t += (now()-this._started)/1000;
 	}
 	return hms(t);
 };
